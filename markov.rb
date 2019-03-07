@@ -16,18 +16,21 @@ class MarkovChain
   end
 
   def get(word)
-    return '' if !@words[word]
     followers = @words[word]
-    total = followers.inject(0) {|sum,kv| sum += kv[1]}
-    random = rand(total)+1
-    p [total, random]
+
+    return '' if followers.nil?
+
+    total = followers.reduce(0) { |sum, kv| sum + kv[1] }
+    random = rand(total) + 1
+    # p [total, random]
+    # p followers
     partial_sum = 0
-    next_words = followers.select do |_, count|
+    next_words = followers.map do |w, count|
       partial_sum += count
-      partial_sum >= random
-    end
-    p next_words
-    puts
-    next_words.first.first
+      [w, count] if partial_sum >= random
+    end.compact
+    # p next_words
+    # puts
+    next_words[0..5].map(&:first)
   end
 end
