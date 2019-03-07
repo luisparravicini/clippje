@@ -5,6 +5,7 @@ class Screen
   def initialize(clippje)
     @clippje = clippje
     @text_line = 2
+    @messages_x = 14
     @options_line = 10
   end
 
@@ -25,10 +26,20 @@ class Screen
     print Term.clear_screen
     print_clippje
     show_options
+    print_welcome
     print_sentence
   end
 
 protected
+
+  def print_welcome
+    print Term.goto(@messages_x, @options_line + 1)
+    print Term.clear_eol
+
+    if @clippje.sentence.empty? && @clippje.word.empty?
+      print "Hi! Start writing and I'll assist you."
+    end
+  end
 
   def print_clippje
     print Term.goto(0, @options_line)
@@ -56,17 +67,16 @@ protected
   end
 
   def show_options
-    x = 14
-    dy = 2
-    print Term.goto(x, @options_line + dy)
+    dy = 1
+    print Term.goto(@messages_x, @options_line + dy)
     print Term.clear_eol
 
     unless @clippje.words.empty?
       @clippje.words.each_with_index do |w, i|
-        print Term.goto(x, @options_line + dy + i)
+        print Term.goto(@messages_x, @options_line + dy + i)
         print "#{i}. #{w}"
       end
-      print Term.goto(x, @options_line + dy + @clippje.words.size)
+      print Term.goto(@messages_x, @options_line + dy + @clippje.words.size)
       print "#{RAND_OPTION}. random"
     end
   end
