@@ -4,6 +4,8 @@ require_relative 'term'
 class Screen
   def initialize(clippje)
     @clippje = clippje
+    @text_line = 2
+    @options_line = 10
   end
 
   def select_option(index)
@@ -28,14 +30,18 @@ class Screen
 protected
 
   def print_sentence
-    print Term.goto(1, 2)
-    print Term.clear_eol
+    (@text_line..@options_line - 1).each do |y|
+      print Term.goto(1, y)
+      print Term.clear_eol
+    end
+    print "┣#{'━' * 60}┫"
+    print Term.goto(1, @text_line)
     print '> '
     print @clippje.sentence.join(' ') + @clippje.word
   end
 
   def show_options
-    print Term.goto(1, 10)
+    print Term.goto(1, @options_line)
     print Term.clear_eol
 
     unless @clippje.words.empty?

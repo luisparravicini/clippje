@@ -42,7 +42,7 @@ class Clippje
       @screen.draw
 
       k = read_char
-      if k == RAND_OPTION || k =~ /\d/
+      if !@words.empty? && k == RAND_OPTION || k =~ /\d/
         unless @word.empty?
           @sentence << @word
           @word = ''
