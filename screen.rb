@@ -31,7 +31,7 @@ class Screen
 protected
 
   def print_clippje
-    print Term.goto(0, @options_line + 4)
+    print Term.goto(0, @options_line + 2)
     puts <<-EOF
 
    ---

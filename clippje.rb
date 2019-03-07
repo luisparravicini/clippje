@@ -3,6 +3,7 @@
 
 require_relative 'markov'
 require_relative 'screen'
+require_relative 'term'
 require 'io/console'
 
 
@@ -27,7 +28,7 @@ class Clippje
     @word = ''
     @words = []
     @screen = Screen.new(self)
-    @mc = MarkovChain.new(File.read("2147-0.txt"))
+    setup_markov
   end
 
   def run
@@ -61,6 +62,26 @@ class Clippje
       end
 
     end
+  end
+
+protected
+
+  def setup_markov
+    text_dir = File.join(File.dirname(__FILE__), 'texts')
+    files = Dir.glob(File.join(text_dir, '*'))
+    progress_seq = ['|', '/', '-', '\\']
+    progress_index = 0
+    text = files.map do |path|
+      print Term::clear_eol
+      print "\rreading #{files.size} files... #{progress_seq[progress_index]}"
+      progress_index = (progress_index + 1) % progress_seq.size
+
+      IO.read(path, encoding: 'utf-8').scrub
+    end.join("\n")
+    print Term::clear_eol
+    print "\rcomputing markov chain..."
+
+    @mc = MarkovChain.new(text)
   end
 
 end
