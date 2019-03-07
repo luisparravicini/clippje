@@ -5,6 +5,7 @@ require_relative 'markov'
 require_relative 'screen'
 require_relative 'term'
 require 'io/console'
+require 'nokogiri'
 
 
 
@@ -69,21 +70,19 @@ class Clippje
 protected
 
   def setup_markov
+    @mc = MarkovChain.new
+
     text_dir = File.join(File.dirname(__FILE__), 'texts',
-      'detective-fiction')
+      'Science_Fiction')
     files = Dir.glob(File.join(text_dir, '*'))
-    progress_seq = ['|', '/', '-', '\\']
-    progress_index = 0
-    text = files.map do |path|
+    files.each_with_index do |path, i|
       print Term::clear_eol
-      print "\rreading #{files.size} files... #{progress_seq[progress_index]}"
-      progress_index = (progress_index + 1) % progress_seq.size
+      print "\rreading #{i}/#{files.size} files..."
 
-      IO.read(path, encoding: 'utf-8').scrub
-    end.join("\n")
-    print "\r#{Term::clear_eol}analyzing texts..."
-
-    @mc = MarkovChain.new(text)
+      txt = IO.read(path, encoding: 'utf-8').scrub
+      doc = Nokogiri::HTML(txt)
+      @mc.add_texts(doc.search('p').map(&:text))
+    end
   end
 
 end

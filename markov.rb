@@ -2,14 +2,19 @@
 # MarkovChain class based on code from
 # https://gist.github.com/alexpatriquin/11226396
 class MarkovChain
-  def initialize(text)
+  def initialize
     @words = Hash.new
-    wordlist = text.split
-    wordlist.each_with_index do |word, index|
-      add(word, wordlist[index + 1]) if index <= wordlist.size - 2
-    end
   end
 
+  def add_texts(texts)
+    texts.each do |text|
+      wordlist = text.split
+      wordlist.each_with_index do |word, index|
+        add(word, wordlist[index + 1]) if index <= wordlist.size - 2
+      end
+    end
+  end
+  
   def add(word, next_word)
     @words[word] ||= Hash.new(0)
     @words[word][next_word] += 1
