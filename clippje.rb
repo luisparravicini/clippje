@@ -69,7 +69,8 @@ class Clippje
 protected
 
   def setup_markov
-    text_dir = File.join(File.dirname(__FILE__), 'texts')
+    text_dir = File.join(File.dirname(__FILE__), 'texts',
+      'detective-fiction')
     files = Dir.glob(File.join(text_dir, '*'))
     progress_seq = ['|', '/', '-', '\\']
     progress_index = 0
