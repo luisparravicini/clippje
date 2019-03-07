@@ -2,7 +2,6 @@
 
 
 require_relative 'markov'
-require_relative 'term'
 require_relative 'screen'
 require 'io/console'
 
@@ -32,18 +31,15 @@ class Clippje
   end
 
   def run
-    @screen.draw
-
-    until @sentence.count(".") == 4
+    until @sentence.count(".") == 4      
       completion_word = if @word.empty?
         @sentence[-1]
       else
         @word
       end
       @words = @mc.get(completion_word)
-      @screen.show_options
 
-      @screen.print_sentence
+      @screen.draw
 
       k = read_char
       if k == RAND_OPTION || k =~ /\d/
