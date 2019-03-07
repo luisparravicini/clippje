@@ -20,11 +20,13 @@ end
 
 def print_sentence(sentence, word)
   print Term.goto(1, 2)
+  print Term.clear_eol
   print '> '
   print sentence.join(' ') + word
 end
 
 RAND_OPTION = '/'
+DELETE_KEY = "\x7f"
 
 def show_options(options)
   print Term.goto(1, 10)
@@ -79,7 +81,7 @@ until sentence.count(".") == 4
   elsif k == ' '
     sentence << word
     word = ''
-  elsif k == "\x08" && !word.empty?
+  elsif k == DELETE_KEY && !word.empty?
     word = word[0..-2]
   else
     word += k
@@ -87,4 +89,4 @@ until sentence.count(".") == 4
 
 end
 
-puts sentence << "\n\n"
+puts sentence
