@@ -23,11 +23,28 @@ class Screen
 
   def draw
     print Term.clear_screen
+    print_clippje
     show_options
     print_sentence
   end
 
 protected
+
+  def print_clippje
+    print Term.goto(0, @options_line + 4)
+    puts <<-EOF
+
+   ---
+  /   \\
+  |   |
+  @   @
+  |   |
+  ||  |/
+  ||  ||
+  |\\_/ |
+  \\___/
+  EOF
+  end
 
   def print_sentence
     (@text_line..@options_line - 1).each do |y|
