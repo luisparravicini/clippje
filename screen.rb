@@ -31,9 +31,8 @@ class Screen
 protected
 
   def print_clippje
-    print Term.goto(0, @options_line + 2)
+    print Term.goto(0, @options_line)
     puts <<-EOF
-
    ---
   /   \\
   |   |
@@ -51,19 +50,24 @@ protected
       print Term.goto(1, y)
       print Term.clear_eol
     end
-    print "┣#{'━' * 60}┫"
     print Term.goto(1, @text_line)
     print '> '
     print @clippje.sentence.join(' ') + @clippje.word
   end
 
   def show_options
-    print Term.goto(1, @options_line)
+    x = 14
+    dy = 2
+    print Term.goto(x, @options_line + dy)
     print Term.clear_eol
 
     unless @clippje.words.empty?
-      @clippje.words.each_with_index { |w, i| print "[#{i}. #{w}] " }
-      print "[#{RAND_OPTION} random]"
+      @clippje.words.each_with_index do |w, i|
+        print Term.goto(x, @options_line + dy + i)
+        print "#{i}. #{w}"
+      end
+      print Term.goto(x, @options_line + dy + @clippje.words.size)
+      print "#{RAND_OPTION}. random"
     end
   end
 
