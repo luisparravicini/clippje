@@ -18,21 +18,6 @@ def read_char
     c
 end
 
-def read_word
-  w = ''
-  quit = false
-  
-  while !quit do
-    c = read_char
-    
-    break if c == ' '
-    w += c
-    print c
-  end
-
-  w
-end
-
 def print_sentence(sentence, word)
   print Term.goto(1, 2)
   print '> '
