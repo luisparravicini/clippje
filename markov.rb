@@ -15,7 +15,7 @@ class MarkovChain
     @words[word][next_word] += 1
   end
 
-  def get(word)
+  def get(word, max_words)
     followers = @words[word]
 
     return '' if followers.nil?
@@ -31,6 +31,6 @@ class MarkovChain
     end.compact
     # p next_words
     # puts
-    next_words[0..5].map(&:first)
+    next_words[0..max_words].map(&:first)
   end
 end

@@ -22,12 +22,14 @@ class Clippje
   DELETE_KEY = "\x7f"
 
   attr_accessor :sentence, :word, :words
+  attr_reader :max_options
 
   def initialize
     @sentence = []
     @word = ''
     @words = []
     @screen = Screen.new(self)
+    @max_options = 5
     setup_markov
   end
 
@@ -38,7 +40,7 @@ class Clippje
       else
         @word
       end
-      @words = @mc.get(completion_word)
+      @words = @mc.get(completion_word, @max_options)
 
       @screen.draw
 
@@ -78,8 +80,7 @@ protected
 
       IO.read(path, encoding: 'utf-8').scrub
     end.join("\n")
-    print Term::clear_eol
-    print "\rcomputing markov chain..."
+    print "\r#{Term::clear_eol}analyzing texts..."
 
     @mc = MarkovChain.new(text)
   end

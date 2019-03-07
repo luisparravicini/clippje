@@ -33,10 +33,9 @@ class Screen
 protected
 
   def print_welcome
-    print Term.goto(@messages_x, @options_line + 1)
-    print Term.clear_eol
-
     if @clippje.sentence.empty? && @clippje.word.empty?
+      print Term.goto(@messages_x, @options_line + 1)
+      print Term.clear_eol
       print "Hi! Start writing and I'll assist you."
     end
   end
@@ -68,8 +67,11 @@ protected
 
   def show_options
     dy = 1
-    print Term.goto(@messages_x, @options_line + dy)
-    print Term.clear_eol
+
+    (@clippje.max_options + 2).times.each do |i|
+      print Term.goto(@messages_x, @options_line + dy + i)
+      print Term.clear_eol
+    end
 
     unless @clippje.words.empty?
       @clippje.words.each_with_index do |w, i|
