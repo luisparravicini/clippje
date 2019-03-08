@@ -21,6 +21,7 @@ class Cache
     	@mc.load(@cache[:mc])
     end
 
+    dirty = false
     files.each_with_index do |path, i|
       print Term::clear_eol
       print "\rreading #{i+1}/#{files.size} files..."
@@ -28,13 +29,23 @@ class Cache
       txt = IO.read(path, encoding: 'utf-8').scrub
       doc = Nokogiri::HTML(txt)
 
-      @mc.add_texts(doc.search('p').map(&:text))
+      if doc.at('pre')&.text =~ /Language: (\S+)/
+        lang = $1
+        unless lang == 'English'
+          next
+        end
+      else
+        puts "\nLanguage not found for #{path}"
+        next
+      end
 
+      @mc.add_texts(doc.search('p').map(&:text))
       @cache[:files][File.basename(path)] = File.mtime(path)
+      dirty = true
     end
     puts
 
-    save_cache
+    save_cache if dirty
 	end
 
 
