@@ -6,6 +6,18 @@ class MarkovChain
     @words = Hash.new
   end
 
+  def dump
+    @words&.dup
+  end
+
+  def load(data)
+    if data.nil?
+      @words.clear
+    else
+      @words = data
+    end
+  end
+
   def add_texts(texts)
     texts.each do |text|
       wordlist = text.split

@@ -4,6 +4,7 @@
 require_relative 'markov'
 require_relative 'screen'
 require_relative 'term'
+require_relative 'cache'
 require 'io/console'
 require 'nokogiri'
 
@@ -35,13 +36,8 @@ class Clippje
   end
 
   def run
-    until @sentence.count(".") == 4      
-      completion_word = if @word.empty?
-        @sentence[-1]
-      else
-        @word
-      end
-      @words = @mc.get(completion_word, @max_options)
+    until @sentence.count(".") == 4
+      @words = find_completions
 
       @screen.draw
 
@@ -69,20 +65,25 @@ class Clippje
 
 protected
 
+  def find_completions
+    completion_word = if @word.empty?
+      @sentence[-1]
+    else
+      @word
+    end
+
+    @mc.get(completion_word, @max_options)
+  end
+
   def setup_markov
     @mc = MarkovChain.new
 
     text_dir = File.join(File.dirname(__FILE__), 'texts',
-      'Science_Fiction')
-    files = Dir.glob(File.join(text_dir, '*'))
-    files.each_with_index do |path, i|
-      print Term::clear_eol
-      print "\rreading #{i}/#{files.size} files..."
-
-      txt = IO.read(path, encoding: 'utf-8').scrub
-      doc = Nokogiri::HTML(txt)
-      @mc.add_texts(doc.search('p').map(&:text))
-    end
+      # 'Science_Fiction')
+      'Detective_Fiction')
+    cache = Cache.new(@mc, text_dir)
+    cache.load_texts
+    exit 1
   end
 
 end
