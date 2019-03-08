@@ -83,7 +83,6 @@ protected
       'Detective_Fiction')
     cache = Cache.new(@mc, text_dir)
     cache.load_texts
-    exit 1
   end
 
 end
