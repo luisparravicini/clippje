@@ -19,7 +19,7 @@ class Screen
       value = rand(@clippje.words.size)
     end
 
-    @clippje.words[value]
+    @clippje.words[value][0]
   end
 
   def draw
@@ -63,6 +63,7 @@ protected
     print Term.goto(1, @text_line)
     print '> '
     print @clippje.sentence.join(' ') + @clippje.word
+    # print (@clippje.sentence + ['/'] + [@clippje.word]).inspect
   end
 
   def show_options
@@ -76,7 +77,7 @@ protected
     unless @clippje.words.empty?
       @clippje.words.each_with_index do |w, i|
         print Term.goto(@messages_x, @options_line + dy + i)
-        print "#{i}. #{w}"
+        print '%d. %s (%.2f)' % [i, w[0], w[1]]
       end
       print Term.goto(@messages_x, @options_line + dy + @clippje.words.size)
       print "#{RAND_OPTION}. random"

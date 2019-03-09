@@ -1,9 +1,10 @@
 
-# MarkovChain class based on code from
+# MarkovChain class loosely based on code from
 # https://gist.github.com/alexpatriquin/11226396
 class MarkovChain
-  def initialize
+  def initialize(logger)
     @words = Hash.new
+    @logger = logger
   end
 
   def dump
@@ -21,33 +22,56 @@ class MarkovChain
   def add_texts(texts)
     texts.each do |text|
       wordlist = text.split
+      order_2_words = []
       wordlist.each_with_index do |word, index|
+        order_2_words << word
+        if order_2_words.size == 2 && index <= wordlist.size - 3
+          add(order_2_words, wordlist[index + 1])
+          order_2_words = [order_2_words[1]]
+        end
+          
         add(word, wordlist[index + 1]) if index <= wordlist.size - 2
       end
     end
   end
   
-  def add(word, next_word)
-    @words[word] ||= Hash.new(0)
-    @words[word][next_word] += 1
+  def add(k, next_word)
+    k = to_key(k)
+    @words[k] ||= Hash.new(0)
+    @words[k][next_word] += 1
   end
 
-  def get(word, max_words)
-    followers = @words[word]
+  def get(words, max_words)
+    words = to_key(words)
 
-    return '' if followers.nil?
+    followers = @words[words]
+
+    return [] if followers.nil?
 
     total = followers.reduce(0) { |sum, kv| sum + kv[1] }
-    random = rand(total) + 1
+    total = total.to_f
+    # random = rand(total) + 1
     # p [total, random]
     # p followers
-    partial_sum = 0
+    # partial_sum = 0
     next_words = followers.map do |w, count|
-      partial_sum += count
-      [w, count] if partial_sum >= random
-    end.compact
+      # partial_sum += count
+      [w, count / total] # if partial_sum >= random
+    end.sort_by { |x| x[1] }.reverse
+
     # p next_words
     # puts
-    next_words[0..max_words].map(&:first)
+
+    @logger.info('markov.get(%s): %s' % 
+      [words.inspect, next_words.map { |x| '%s (%.2f)' % x }[0..30]])
+
+    next_words[0..max_words]
   end
+
+protected
+
+  def to_key(x)
+    x.is_a?(Array) ? x : [x]
+  end
+
 end

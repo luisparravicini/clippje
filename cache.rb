@@ -39,7 +39,8 @@ class Cache
         next
       end
 
-      @mc.add_texts(doc.search('p').map(&:text))
+      all_texts = doc.search('p').map(&:text)
+      @mc.add_texts(all_texts)
       @cache[:files][File.basename(path)] = File.mtime(path)
       dirty = true
     end
@@ -96,7 +97,7 @@ class Cache
 	end
 
 	def load_cache
-		print "loading cache..."
+		print 'loading cache...'
 
 		@cache = if File.exist?(cache_path)
 			Marshal::load(IO.read(cache_path))
