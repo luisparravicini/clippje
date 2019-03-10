@@ -90,7 +90,10 @@ protected
 
   def to_key(x)
     unless x.nil?
-      arrayize(x).map { |w| @wordlist[@wordlist_keys[w]] }
+      arrayize(x).map do |w| 
+        k = @wordlist_keys[w]
+        k.nil? ? nil : @wordlist[k]
+      end
     end
   end
 
