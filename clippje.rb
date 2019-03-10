@@ -87,10 +87,11 @@ protected
       [@sentence[-1], @word].compact
     end
 
-    items = @mc.get(completion_word, @max_options)
+    items = [@mc.get(completion_word, @max_options)]
 
     if completion_words&.size == 2
-      items = @mc.get(completion_words, @max_options) + items
+      other_items = @mc.get(completion_words, @max_options)
+      items.insert(0, other_items)
     end
 
     items
@@ -102,7 +103,8 @@ protected
     text_dir = File.join(File.dirname(__FILE__), 'texts',
       # 'Science_Fiction')
       # 'Detective_Fiction')
-      'Western')
+      # 'Western')
+      'Test')
     puts "using '#{File.basename(text_dir)}' corpus"
     cache = Cache.new(@mc, text_dir)
     cache.load_texts

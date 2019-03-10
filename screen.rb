@@ -1,4 +1,5 @@
 require_relative 'term'
+require_relative 'markov'
 
 
 class Screen
@@ -10,16 +11,17 @@ class Screen
   end
 
   def select_option(index)
+    all_options = MarkovChain.normalize(@clippje.words.flatten(1))
     value = if index == RAND_OPTION
-      rand(@clippje.words.size)
+      rand(all_options.size)
     else
       value.to_i
     end
-    if value < 0 || value >= @clippje.words.size
-      value = rand(@clippje.words.size)
+    if value < 0 || value >= all_options.size
+      value = rand(all_options.size)
     end
 
-    @clippje.words[value][0]
+    all_options[value][0]
   end
 
   def draw
@@ -75,11 +77,21 @@ protected
     end
 
     unless @clippje.words.empty?
-      @clippje.words.each_with_index do |w, i|
-        print Term.goto(@messages_x, @options_line + dy + i)
-        print '%d. %s (%.2f)' % [i, w[0], w[1]]
+      i = y = 0
+      @clippje.words.each do |wordlist|
+        wordlist.each_with_index do |w, wi|
+          print Term.goto(@messages_x, @options_line + dy + y)
+          print '%d. %s (%.2f)' % [i, w[0], w[1]]
+
+          i += 1
+          y += 1
+        end
+        print Term.goto(@messages_x, @options_line + dy + y)
+        print "----"
+
+        y += 1
       end
-      print Term.goto(@messages_x, @options_line + dy + @clippje.words.size)
+      print Term.goto(@messages_x, @options_line + dy + y)
       print "#{RAND_OPTION}. random"
     end
   end

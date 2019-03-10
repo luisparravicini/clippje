@@ -48,24 +48,20 @@ class MarkovChain
 
     return [] if followers.nil?
 
-    total = followers.reduce(0) { |sum, kv| sum + kv[1] }
-    total = total.to_f
-    # random = rand(total) + 1
-    # p [total, random]
-    # p followers
-    # partial_sum = 0
-    next_words = followers.map do |w, count|
-      # partial_sum += count
-      [w, count / total] # if partial_sum >= random
-    end.sort_by { |x| x[1] }.reverse
-
-    # p next_words
-    # puts
+    next_words = MarkovChain.normalize(followers)
 
     @logger.info('markov.get(%s): %s' % 
       [words.inspect, next_words.map { |x| '%s (%.2f)' % x }[0..30]])
 
-    next_words[0..max_words]
+    MarkovChain.normalize(next_words[0..max_words])
+  end
+
+  def self.normalize(items)
+    total = items.reduce(0) { |sum, kv| sum + kv[1] }
+    total = total.to_f
+    items.map do |w, count|
+      [w, count / total]
+    end.sort_by { |x| x[1] }.reverse
   end
 
 protected
