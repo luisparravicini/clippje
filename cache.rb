@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'zlib'
 
 
 class Cache
@@ -17,6 +18,7 @@ class Cache
     	@mc.load(@cache[:mc])
     	return
     end
+
     unless create_from_scratch
     	@mc.load(@cache[:mc])
     end
@@ -89,7 +91,9 @@ class Cache
 
 		tmp_path = cache_path + '.tmp'
 		File.open(tmp_path, 'w') do |io|
-			Marshal::dump(@cache, io)
+      Zlib::GzipWriter.wrap(io) do |gzio|
+			  Marshal::dump(@cache, gzio)
+      end
 		end
 		FileUtils.mv(tmp_path, cache_path)
 
@@ -100,7 +104,11 @@ class Cache
 		print 'loading cache...'
 
 		@cache = if File.exist?(cache_path)
-			Marshal::load(IO.read(cache_path))
+      File.open(cache_path) do |io|
+        Zlib::GzipReader.wrap(io) do |gzio|
+			    Marshal::load(gzio)
+        end
+      end
 		else
 			{ files: Hash.new, mc: nil }
 		end

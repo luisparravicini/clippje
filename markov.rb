@@ -1,21 +1,26 @@
+require 'benchmark'
+
 
 # MarkovChain class loosely based on code from
 # https://gist.github.com/alexpatriquin/11226396
 class MarkovChain
   def initialize(logger)
     @words = Hash.new
+    @wordlist = []
+    @wordlist_keys = Hash.new
     @logger = logger
   end
 
   def dump
-    @words&.dup
+    [@words.dup, @wordlist.dup, @wordlist_keys.dup]
   end
 
   def load(data)
     if data.nil?
       @words.clear
+      @wordlist.clear
     else
-      @words = data
+      @words, @wordlist, @wordlist_keys = data
     end
   end
 
@@ -36,15 +41,15 @@ class MarkovChain
   end
   
   def add(k, next_word)
+    add_to_wordlist(k)
     k = to_key(k)
     @words[k] ||= Hash.new(0)
-    @words[k][next_word] += 1
+    @words[k][put_and_get_index(next_word)] += 1
   end
 
   def get(words, max_words)
-    words = to_key(words)
-
-    followers = @words[words]
+    k = to_key(words)
+    followers = @words[k]
 
     return [] if followers.nil?
 
@@ -53,7 +58,10 @@ class MarkovChain
     @logger.info('markov.get(%s): %s' % 
       [words.inspect, next_words.map { |x| '%s (%.2f)' % x }[0..30]])
 
-    MarkovChain.normalize(next_words[0..max_words])
+    result = next_words[0..max_words].map do |w|
+      [@wordlist[@wordlist_keys[w.first]], w.last]
+    end
+    MarkovChain.normalize(result)
   end
 
   def self.normalize(items)
@@ -66,8 +74,27 @@ class MarkovChain
 
 protected
 
-  def to_key(x)
-    x.is_a?(Array) ? x : [x]
+  def put_and_get_index(w)
+    unless @wordlist_keys.has_key?(w)
+      @wordlist << w
+      @wordlist_keys[w] = @wordlist.size - 1
+    end
+    @wordlist[@wordlist_keys[w]]
   end
 
+  def add_to_wordlist(x)
+    arrayize(x).each do |w|
+      put_and_get_index(w)
+    end
+  end
+
+  def to_key(x)
+    unless x.nil?
+      arrayize(x).map { |w| @wordlist[@wordlist_keys[w]] }
+    end
+  end
+
+  def arrayize(x)
+    x.is_a?(Array) ? x : [x]
+  end
 end
