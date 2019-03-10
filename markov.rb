@@ -1,14 +1,11 @@
-require 'benchmark'
-
 
 # MarkovChain class loosely based on code from
 # https://gist.github.com/alexpatriquin/11226396
 class MarkovChain
-  def initialize(logger)
+  def initialize
     @words = Hash.new
     @wordlist = []
     @wordlist_keys = Hash.new
-    @logger = logger
   end
 
   def dump
@@ -55,8 +52,8 @@ class MarkovChain
 
     next_words = MarkovChain.normalize(followers)
 
-    @logger.info('markov.get(%s): %s' % 
-      [words.inspect, next_words.map { |x| '%s (%.2f)' % x }[0..30]])
+    # puts('markov.get(%s): %s' % 
+    #   [words.inspect, next_words.map { |x| '%s (%.2f)' % x }[0..30]])
 
     result = next_words[0..max_words].map do |w|
       [@wordlist[@wordlist_keys[w.first]], w.last]

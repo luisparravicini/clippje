@@ -1,5 +1,6 @@
 require 'fileutils'
 require 'zlib'
+require_relative 'term'
 
 
 class Cache

@@ -3,11 +3,9 @@
 
 require_relative 'markov'
 require_relative 'screen'
-require_relative 'term'
 require_relative 'cache'
 require 'io/console'
 require 'nokogiri'
-require 'logger'
 
 
 
@@ -28,7 +26,6 @@ class Clippje
   attr_reader :max_options
 
   def initialize
-    create_logger
     @sentence = []
     @word = ''
     @words = []
@@ -67,13 +64,6 @@ class Clippje
 
 protected
 
-  def create_logger
-    file = File.open('clippje.log', File::CREAT | File::WRONLY | File::APPEND)
-    file.sync = true
-    @logger = Logger.new(file)
-    @logger.level = Logger::INFO
-  end
-
   def find_completions
     completion_word = if @word.empty?
       @sentence[-1]
@@ -98,13 +88,13 @@ protected
   end
 
   def setup_markov
-    @mc = MarkovChain.new(@logger)
+    @mc = MarkovChain.new
 
     text_dir = File.join(File.dirname(__FILE__), 'texts',
       # 'Science_Fiction')
       # 'Detective_Fiction')
-      'Western')
-      # 'Test')
+      # 'Western')
+      'Test')
     puts "using '#{File.basename(text_dir)}' corpus"
     cache = Cache.new(@mc, text_dir)
     cache.load_texts
