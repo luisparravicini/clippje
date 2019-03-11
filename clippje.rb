@@ -104,8 +104,8 @@ protected
     text_dir = File.join(File.dirname(__FILE__), 'texts',
       # 'Science_Fiction')
       # 'Detective_Fiction')
-      # 'Western')
-      'Test')
+      'Western')
+      # 'Test')
     puts "using '#{File.basename(text_dir)}' corpus"
     cache = Cache.new(@mc, text_dir)
     cache.load_texts

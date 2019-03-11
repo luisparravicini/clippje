@@ -10,20 +10,6 @@ class Screen
     @first_draw = true
   end
 
-  def select_option(index)
-    all_options = @clippje.words.flatten(1)
-    value = if index == RAND_OPTION
-      rand(all_options.size)
-    else
-      index.to_i
-    end
-    if value < 0 || value >= all_options.size
-      value = rand(all_options.size)
-    end
-
-    all_options[value][0]
-  end
-
   def draw
     puts "\n\n"
     if @first_draw
