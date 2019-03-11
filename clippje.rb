@@ -47,9 +47,11 @@ class Clippje
 
       k = read_char
       if k == ' ' || k == RAND_OPTION
-        @word += RAND_OPTION if k == RAND_OPTION
-        if @word == RAND_OPTION || @word =~ /^\d+$/
-          @word = select_option(@word)
+        unless @words.empty?
+          @word += RAND_OPTION if k == RAND_OPTION
+          if @word == RAND_OPTION || @word =~ /^\d+$/
+            @word = select_option(@word)
+          end
         end
 
         @sentence << @word
@@ -95,6 +97,8 @@ protected
       items.insert(0, other_items)
     end
 
+    items.delete_if { |x| x.empty? }
+    
     items
   end
 
