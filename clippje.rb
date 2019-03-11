@@ -35,28 +35,32 @@ class Clippje
   end
 
   def run
-    until @sentence.count(".") == 4
-      @words = find_completions
+    @screen.draw
 
-      @screen.draw
+    needs_redraw = false
+    until @sentence.count(".") == 4
+      if needs_redraw
+        @words = find_completions    
+        @screen.draw
+        needs_redraw = false
+      end
 
       k = read_char
-      if !@words.empty? && k == RAND_OPTION || k =~ /\d/
-        unless @word.empty?
-          @sentence << @word
-          @word = ''
+      if k == ' ' || k == RAND_OPTION
+        @word += RAND_OPTION if k == RAND_OPTION
+        if @word == RAND_OPTION || @word =~ /^\d+$/
+          @word = @screen.select_option(@word)
         end
 
-        w = @screen.select_option(k)
-        @sentence << w
-        @words = []
-      elsif k == ' '
         @sentence << @word
         @word = ''
+        needs_redraw = true
       elsif k == DELETE_KEY && !@word.empty?
         @word = @word[0..-2]
+        print "\x08 \x08"
       else
         @word += k
+        print k
       end
 
     end
@@ -65,20 +69,11 @@ class Clippje
 protected
 
   def find_completions
-    completion_word = if @word.empty?
-      @sentence[-1]
-    else
-      @word
-    end
+    return [] if @sentence.empty?
 
-    completion_words = if @word.empty?
-      @sentence[-2..-1]
-    else
-      [@sentence[-1], @word].compact
-    end
+    items = [@mc.get(@sentence[-1], @max_options)]
 
-    items = [@mc.get(completion_word, @max_options)]
-
+    completion_words = @sentence[-2..-1]&.compact
     if completion_words&.size == 2
       other_items = @mc.get(completion_words, @max_options)
       items.insert(0, other_items)

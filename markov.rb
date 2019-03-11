@@ -1,3 +1,5 @@
+require 'benchmark'
+
 
 # MarkovChain class loosely based on code from
 # https://gist.github.com/alexpatriquin/11226396
@@ -23,17 +25,7 @@ class MarkovChain
 
   def add_texts(texts)
     texts.each do |text|
-      wordlist = text.split
-      order_2_words = []
-      wordlist.each_with_index do |word, index|
-        order_2_words << word
-        if order_2_words.size == 2 && index <= wordlist.size - 3
-          add(order_2_words, wordlist[index + 1])
-          order_2_words = [order_2_words[1]]
-        end
-          
-        add(word, wordlist[index + 1]) if index <= wordlist.size - 2
-      end
+      parse_text(text)
     end
   end
   
@@ -70,6 +62,26 @@ class MarkovChain
   end
 
 protected
+
+  def parse_text(text)
+    eof = false
+    order_2_words = []
+    scanner = StringScanner.new(text)
+    while !eof do
+      cur_word = scanner.scan_until(/\S+/)
+      eof = cur_word.nil?
+      break if eof
+      next_word = scanner.check_until(/\S+/)
+
+      order_2_words << cur_word
+      if order_2_words.size == 2 && !next_word.nil?
+        add(order_2_words, next_word)
+        order_2_words = [order_2_words[1]]
+      end
+          
+      add(cur_word, next_word) unless next_word.nil?
+    end
+  end
 
   def put_and_get_index(w)
     unless @wordlist_keys.has_key?(w)

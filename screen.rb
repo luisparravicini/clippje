@@ -7,15 +7,15 @@ class Screen
     @text_line = 2
     @messages_x = 14
     @options_line = 10
-    @first_draw = false
+    @first_draw = true
   end
 
   def select_option(index)
-    all_options = MarkovChain.normalize(@clippje.words.flatten(1))
+    all_options = @clippje.words.flatten(1)
     value = if index == RAND_OPTION
       rand(all_options.size)
     else
-      value.to_i
+      index.to_i
     end
     if value < 0 || value >= all_options.size
       value = rand(all_options.size)
@@ -25,6 +25,7 @@ class Screen
   end
 
   def draw
+    puts "\n\n"
     if @first_draw
       print_welcome
       @first_draw = false
@@ -46,13 +47,21 @@ protected
   ||  ||
   |\\_/ |
   \\___/
+
+  
   EOF
   end
 
   def print_sentence
+    puts <<-EOT
+
+Write a word and space to add it to the sentence.
+Write an option number and space to choose that word.
+
+    EOT
     print '> '
-    print @clippje.sentence.join(' ') + @clippje.word
-    # print (@clippje.sentence + ['/'] + [@clippje.word]).inspect
+    print @clippje.sentence.join(' ')
+    print ' '
   end
 
   def show_options
@@ -65,7 +74,7 @@ protected
         end
         puts "----"
       end
-      puts "#{RAND_OPTION}. random"
+      puts "#{RAND_OPTION}. random\n"
     end
   end
 
