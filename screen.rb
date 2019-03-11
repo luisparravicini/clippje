@@ -74,7 +74,7 @@ Write an option number and space to choose that word.
         end
         puts "----"
       end
-      puts "#{RAND_OPTION}. random\n"
+      puts "#{RAND_OPTION}. auto\n"
     end
   end
 

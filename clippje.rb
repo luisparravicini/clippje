@@ -49,7 +49,7 @@ class Clippje
       if k == ' ' || k == RAND_OPTION
         @word += RAND_OPTION if k == RAND_OPTION
         if @word == RAND_OPTION || @word =~ /^\d+$/
-          @word = @screen.select_option(@word)
+          @word = select_option(@word)
         end
 
         @sentence << @word
@@ -67,6 +67,22 @@ class Clippje
   end
 
 protected
+
+  def select_option(index)
+    if index == RAND_OPTION
+      options = if @words.size == 2
+        rand < 2/3.to_f ? @words.last : @words.first
+      else
+        @words.first
+      end
+
+      options[rand(options.size)][0]
+    else
+      all_options = @words.flatten(1)
+      value = index.to_i
+      all_options[value][0]
+    end
+  end
 
   def find_completions
     return [] if @sentence.empty?
