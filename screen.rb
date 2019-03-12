@@ -43,10 +43,12 @@ protected
 
 Write a word and space to add it to the sentence.
 Write an option number and space to choose that word.
+<delete> To delete the last character/word.
 
     EOT
     print '> '
     print @clippje.sentence.join(' ')
+    # print @clippje.sentence.inspect
     print ' '
   end
 

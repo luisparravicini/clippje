@@ -68,10 +68,10 @@ protected
     order_2_words = []
     scanner = StringScanner.new(text)
     while !eof do
-      cur_word = scanner.scan_until(/\S+/)
+      cur_word = scanner.scan_until(/\S+/)&.strip
       eof = cur_word.nil?
       break if eof
-      next_word = scanner.check_until(/\S+/)
+      next_word = scanner.check_until(/\S+/)&.strip
 
       order_2_words << cur_word
       if order_2_words.size == 2 && !next_word.nil?

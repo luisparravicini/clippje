@@ -57,9 +57,16 @@ class Clippje
         @sentence << @word
         @word = ''
         needs_redraw = true
-      elsif k == DELETE_KEY && !@word.empty?
-        @word = @word[0..-2]
-        print "\x08 \x08"
+      elsif k == DELETE_KEY
+        if @word.empty?
+          unless @sentence.empty?
+            @sentence = @sentence[0..-2]
+            needs_redraw = true
+          end
+        else
+          @word = @word[0..-2]
+          print "\x08 \x08"
+        end
       else
         @word += k
         print k
@@ -98,7 +105,7 @@ protected
     end
 
     items.delete_if { |x| x.empty? }
-    
+
     items
   end
 
