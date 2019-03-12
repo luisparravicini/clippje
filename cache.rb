@@ -86,7 +86,7 @@ class Cache
 	end
 
 	def save_cache
-        print "saving cache..."
+    print "saving cache..."
 
 		@cache[:mc] = @mc.dump
 

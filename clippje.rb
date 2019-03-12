@@ -25,13 +25,13 @@ class Clippje
   attr_accessor :sentence, :word, :words
   attr_reader :max_options
 
-  def initialize
+  def initialize(corpus)
     @sentence = []
     @word = ''
     @words = []
     @screen = Screen.new(self)
     @max_options = 10
-    setup_markov
+    setup_markov(corpus)
   end
 
   def run
@@ -75,6 +75,10 @@ class Clippje
     end
   end
 
+  def self.corpus_dir
+    File.join(File.dirname(__FILE__), 'texts')
+  end
+
 protected
 
   def select_option(index)
@@ -109,14 +113,14 @@ protected
     items
   end
 
-  def setup_markov
+  def setup_markov(corpus)
     @mc = MarkovChain.new
 
-    text_dir = File.join(File.dirname(__FILE__), 'texts',
-      # 'Science_Fiction')
-      # 'Detective_Fiction')
-      'Western')
-      # 'Test')
+    text_dir = File.join(Clippje.corpus_dir, corpus)
+    unless File.directory?(text_dir)
+      puts "'#{text_dir}' doesn't exist!"
+      exit 1
+    end
     puts "using '#{File.basename(text_dir)}' corpus"
     cache = Cache.new(@mc, text_dir)
     cache.load_texts
@@ -126,6 +130,19 @@ end
 
 
 
-clippje = Clippje.new
+corpus = ARGV.shift
+if corpus.nil?
+  puts "usage: #{$0} <corpus_dir>"
+  puts "available corpuses:"
+  Dir.glob(File.join(Clippje.corpus_dir, '*')).each do |path|
+    next unless File.directory?(path)
+
+    name = File.basename(path)
+    puts "\t#{name}"
+  end
+  exit 1
+end
+
+clippje = Clippje.new(corpus)
 clippje.run
 puts clippje.sentence
