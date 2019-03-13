@@ -11,7 +11,7 @@ class MarkovChain
   end
 
   def dump
-    [@words.dup, @wordlist.dup, @wordlist_keys.dup]
+    [@words, @wordlist, @wordlist_keys]
   end
 
   def load(data)
@@ -65,7 +65,8 @@ protected
 
   def parse_text(text)
     eof = false
-    order_2_words = []
+    last_words = []
+    max_order = 4
     scanner = StringScanner.new(text)
     while !eof do
       cur_word = scanner.scan_until(/\S+/)&.strip
@@ -73,12 +74,15 @@ protected
       break if eof
       next_word = scanner.check_until(/\S+/)&.strip
 
-      order_2_words << cur_word
-      if order_2_words.size == 2 && !next_word.nil?
-        add(order_2_words, next_word)
-        order_2_words = [order_2_words[1]]
+      last_words << cur_word
+      last_words.delete_at(0) if last_words.size > max_order
+
+      (2..max_order).each do |n|
+        if last_words.size >= n && !next_word.nil?
+          add(last_words[-n..-1], next_word)
+        end
       end
-          
+
       add(cur_word, next_word) unless next_word.nil?
     end
   end

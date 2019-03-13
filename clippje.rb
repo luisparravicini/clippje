@@ -32,6 +32,7 @@ class Clippje
     @screen = Screen.new(self)
     @max_options = 10
     setup_markov(corpus)
+    @max_order = 4
   end
 
   def run
@@ -46,7 +47,11 @@ class Clippje
       end
 
       k = read_char
-      if k == ' ' || k == RAND_OPTION
+      if !@sentence.empty? && @word.empty? &&
+      [',', ';', '!', '.'].include?(k)
+        @sentence[-1] += k
+        needs_redraw = true
+      elsif k == ' ' || k == RAND_OPTION
         unless @words.empty?
           @word += RAND_OPTION if k == RAND_OPTION
           if @word == RAND_OPTION || @word =~ /^\d+$/
@@ -83,8 +88,11 @@ protected
 
   def select_option(index)
     if index == RAND_OPTION
-      options = if @words.size == 2
-        rand < 2/3.to_f ? @words.last : @words.first
+      options = if @words > 1
+        items = @words.find do |x|
+          x if rand >= 0.5
+        end
+        items || @words.last
       else
         @words.first
       end
@@ -100,13 +108,18 @@ protected
   def find_completions
     return [] if @sentence.empty?
 
-    items = [@mc.get(@sentence[-1], @max_options)]
+    items = []
 
-    completion_words = @sentence[-2..-1]&.compact
-    if completion_words&.size == 2
-      other_items = @mc.get(completion_words, @max_options)
-      items.insert(0, other_items)
+    @max_order.downto(2).each do |n|
+      completion_words = @sentence[-n..-1]&.compact
+  p completion_words
+      if completion_words&.size == n
+        other_items = @mc.get(completion_words, @max_options)
+        items << other_items
+      end
     end
+
+    items << @mc.get(@sentence[-1], @max_options)
 
     items.delete_if { |x| x.empty? }
 

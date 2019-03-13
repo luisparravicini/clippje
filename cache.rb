@@ -96,6 +96,7 @@ class Cache
 			  Marshal::dump(@cache, gzio)
       end
 		end
+ 
 		FileUtils.mv(tmp_path, cache_path)
 
 		puts

@@ -35,11 +35,13 @@ def fetch_download_link(url)
 end
 
 
-# bookshelves: https://www.gutenberg.org/wiki/Category:Bookshelf
+# bookshelves:
+# https://www.gutenberg.org/wiki/Category:Bookshelf
 
 #shelf = 'https://www.gutenberg.org/wiki/Science_Fiction_(Bookshelf)'
-#shelf = 'https://www.gutenberg.org/wiki/Detective_Fiction_(Bookshelf)'
-shelf = 'https://www.gutenberg.org/wiki/Western_(Bookshelf)'
+# shelf = 'https://www.gutenberg.org/wiki/Detective_Fiction_(Bookshelf)'
+# shelf = 'https://www.gutenberg.org/wiki/Western_(Bookshelf)'
+shelf = 'https://www.gutenberg.org/wiki/Horror_(Bookshelf)'
 shelf_url = URI.parse(shelf)
 
 shelf_name = shelf.split('/').last.gsub(%r{_\(Bookshelf\)}, '')
