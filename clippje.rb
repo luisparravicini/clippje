@@ -88,7 +88,7 @@ protected
 
   def select_option(index)
     if index == RAND_OPTION
-      options = if @words > 1
+      options = if @words.size > 1
         items = @words.find do |x|
           x if rand >= 0.5
         end
@@ -112,7 +112,6 @@ protected
 
     @max_order.downto(2).each do |n|
       completion_words = @sentence[-n..-1]&.compact
-  p completion_words
       if completion_words&.size == n
         other_items = @mc.get(completion_words, @max_options)
         items << other_items

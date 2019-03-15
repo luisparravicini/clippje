@@ -1,26 +1,19 @@
-require 'benchmark'
+require_relative 'mem_store.rb'
 
 
 # MarkovChain class loosely based on code from
 # https://gist.github.com/alexpatriquin/11226396
 class MarkovChain
   def initialize
-    @words = Hash.new
-    @wordlist = []
-    @wordlist_keys = Hash.new
+    @store = MarkovMemoryStore.new
   end
 
   def dump
-    [@words, @wordlist, @wordlist_keys]
+    @store.dump
   end
 
   def load(data)
-    if data.nil?
-      @words.clear
-      @wordlist.clear
-    else
-      @words, @wordlist, @wordlist_keys = data
-    end
+    @store.load(data)
   end
 
   def add_texts(texts)
@@ -30,27 +23,17 @@ class MarkovChain
   end
   
   def add(k, next_word)
-    add_to_wordlist(k)
-    k = to_key(k)
-    @words[k] ||= Hash.new(0)
-    @words[k][put_and_get_index(next_word)] += 1
+    @store.add(k, next_word)
   end
 
   def get(words, max_words)
-    k = to_key(words)
-    followers = @words[k]
-
-    return [] if followers.nil?
-
-    next_words = MarkovChain.normalize(followers)
+    next_words = @store.get(words, max_words)
+    return next_words if next_words.empty?
 
     # puts('markov.get(%s): %s' % 
     #   [words.inspect, next_words.map { |x| '%s (%.2f)' % x }[0..30]])
 
-    result = next_words[0..max_words].map do |w|
-      [@wordlist[@wordlist_keys[w.first]], w.last]
-    end
-    MarkovChain.normalize(result)
+    MarkovChain.normalize(next_words)
   end
 
   def self.normalize(items)
@@ -87,30 +70,4 @@ protected
     end
   end
 
-  def put_and_get_index(w)
-    unless @wordlist_keys.has_key?(w)
-      @wordlist << w
-      @wordlist_keys[w] = @wordlist.size - 1
-    end
-    @wordlist[@wordlist_keys[w]]
-  end
-
-  def add_to_wordlist(x)
-    arrayize(x).each do |w|
-      put_and_get_index(w)
-    end
-  end
-
-  def to_key(x)
-    unless x.nil?
-      arrayize(x).map do |w| 
-        k = @wordlist_keys[w]
-        k.nil? ? nil : @wordlist[k]
-      end
-    end
-  end
-
-  def arrayize(x)
-    x.is_a?(Array) ? x : [x]
-  end
 end
