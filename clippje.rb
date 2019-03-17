@@ -35,7 +35,7 @@ class Clippje
     @max_order = 4
   end
 
-  def run
+  def interactive_run
     @screen.draw
 
     needs_redraw = false
@@ -77,6 +77,16 @@ class Clippje
         print k
       end
 
+    end
+  end
+
+  def gen_sentences(n)
+    until @sentence.count(".") == n
+      @words = find_completions
+      @word = select_option(@word)
+
+      @sentence << @word
+      @word = ''
     end
   end
 
@@ -132,9 +142,10 @@ protected
       exit 1
     end
     puts "using '#{File.basename(text_dir)}' corpus"
-    @mc = MarkovChain.new
+    @mc = MarkovChain.new(text_dir)
     cache = Cache.new(@mc, text_dir)
     cache.load_texts
+    @mc.sync
   end
 
 end
@@ -155,5 +166,6 @@ if corpus.nil?
 end
 
 clippje = Clippje.new(corpus)
-clippje.run
+clippje.interactive_run
+# clippje.gen_sentences(2)
 puts clippje.sentence

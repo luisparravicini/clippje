@@ -1,12 +1,16 @@
 require_relative 'mem_store.rb'
+# require_relative 'sdbm_store.rb'
+# require_relative 'db_store.rb'
 
 
 # MarkovChain class loosely based on code from
 # https://gist.github.com/alexpatriquin/11226396
 class MarkovChain
   
-  def initialize
+  def initialize(corpus_dir)
     @store = MarkovMemoryStore.new
+    # @store = MarkovSDBMStore.new(corpus_dir)
+    # @store = MarkovDBtore.new(corpus_dir)
   end
 
   def dump
@@ -15,6 +19,10 @@ class MarkovChain
 
   def load(data)
     @store.load(data)
+  end
+
+  def sync
+    @store.sync
   end
 
   def add_texts(texts)
@@ -67,7 +75,8 @@ protected
         end
       end
 
-      add(cur_word, next_word) unless next_word.nil?
+      # dont store order 1 seqs
+      # add(cur_word, next_word) unless next_word.nil?
     end
   end
 

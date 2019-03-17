@@ -37,6 +37,9 @@ class MarkovMemoryStore
     [@words, @wordlist, @wordlist_keys]
  	end
 
+  def sync
+  end
+
 protected
 
   def to_key(x)
