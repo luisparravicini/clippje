@@ -4,6 +4,7 @@ require_relative 'mem_store.rb'
 # MarkovChain class loosely based on code from
 # https://gist.github.com/alexpatriquin/11226396
 class MarkovChain
+  
   def initialize
     @store = MarkovMemoryStore.new
   end

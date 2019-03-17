@@ -126,14 +126,13 @@ protected
   end
 
   def setup_markov(corpus)
-    @mc = MarkovChain.new
-
     text_dir = File.join(Clippje.corpus_dir, corpus)
     unless File.directory?(text_dir)
       puts "'#{text_dir}' doesn't exist!"
       exit 1
     end
     puts "using '#{File.basename(text_dir)}' corpus"
+    @mc = MarkovChain.new
     cache = Cache.new(@mc, text_dir)
     cache.load_texts
   end
