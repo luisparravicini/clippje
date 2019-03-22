@@ -5,10 +5,10 @@ require_relative 'term'
 
 class Cache
 
-	def initialize(mc, dir)
+	def initialize(mc, dir, recreate_cache)
 		@mc = mc
 		@dir = dir
-		load_cache
+		load_cache(recreate_cache)
 	end
 
 	def load_texts
@@ -102,19 +102,17 @@ class Cache
 		puts
 	end
 
-	def load_cache
-		print 'loading cache...'
-
-		@cache = if File.exist?(cache_path)
-      File.open(cache_path) do |io|
+	def load_cache(recreate_cache)
+		if !recreate_cache && File.exist?(cache_path)
+      print 'loading cache...'
+      @cache = File.open(cache_path) do |io|
         Zlib::GzipReader.wrap(io) do |gzio|
 			    Marshal::load(gzio)
         end
       end
+      puts
 		else
-			{ files: Hash.new, mc: nil }
+			@cache = { files: Hash.new, mc: nil }
 		end
-
-		puts
 	end
 end

@@ -25,13 +25,13 @@ class Clippje
   attr_accessor :sentence, :word, :words
   attr_reader :max_options
 
-  def initialize(corpus)
+  def initialize(corpus, recreate_cache)
     @sentence = []
     @word = ''
     @words = []
     @screen = Screen.new(self)
     @max_options = 10
-    setup_markov(corpus)
+    setup_markov(corpus, recreate_cache)
     @max_order = 4
   end
 
@@ -135,7 +135,7 @@ protected
     items
   end
 
-  def setup_markov(corpus)
+  def setup_markov(corpus, recreate_cache)
     text_dir = File.join(Clippje.corpus_dir, corpus)
     unless File.directory?(text_dir)
       puts "'#{text_dir}' doesn't exist!"
@@ -143,7 +143,7 @@ protected
     end
     puts "using '#{File.basename(text_dir)}' corpus"
     @mc = MarkovChain.new(text_dir)
-    cache = Cache.new(@mc, text_dir)
+    cache = Cache.new(@mc, text_dir, recreate_cache)
     cache.load_texts
     @mc.sync
   end
@@ -174,13 +174,16 @@ OptionParser.new do |opts|
     options[:corpus] = name
   end
 
+  opts.on("-r", "--recreate-cache", "Recreate cache") do |name|
+    options[:recreate_cache] = name
+  end
+
   opts.on("-l", "--list", "List available corpuses") do
     options[:list] = true
   end
 end.parse!
 
 corpus = options[:corpus]
-interactive = options[:interactive]
 
 if options[:list]
   list_corpuses
@@ -194,8 +197,8 @@ if corpus.nil?
 end
 
 
-clippje = Clippje.new(corpus)
-if interactive
+clippje = Clippje.new(corpus, options[:recreate_cache])
+if options[:interactive]
   clippje.interactive_run
 else
   5.times.each do
