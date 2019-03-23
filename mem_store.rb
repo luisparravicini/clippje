@@ -5,7 +5,6 @@ class MarkovMemoryStore
     @words = Hash.new
   	@wordlist = []
   	@wordlist_keys = Hash.new
-    @starts = []
 	end
 
 	def add(k, next_word)
@@ -25,8 +24,11 @@ class MarkovMemoryStore
 		end
 	end
 
-  def set_starts(data)
-    @starts = data
+  def random_start(size)
+    starts = @words.keys.select { |x|
+      x.size == size && x.first =~ /^[A-Z]/
+    }
+    starts[rand(starts.size)]
   end
   
 	def load(data)
@@ -34,12 +36,12 @@ class MarkovMemoryStore
       @words.clear
       @wordlist.clear
     else
-      @words, @wordlist, @wordlist_keys, @starts = data
+      @words, @wordlist, @wordlist_keys = data
     end
 	end
 
 	def dump
-    [@words, @wordlist, @wordlist_keys, @starts]
+    [@words, @wordlist, @wordlist_keys]
  	end
 
   def sync

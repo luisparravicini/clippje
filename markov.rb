@@ -7,8 +7,9 @@ require_relative 'mem_store.rb'
 # MarkovChain class loosely based on code from
 # https://gist.github.com/alexpatriquin/11226396
 class MarkovChain
-  
+
   def initialize(corpus_dir)
+    @min_order = 2
     @store = MarkovMemoryStore.new
     # @store = MarkovSDBMStore.new(corpus_dir)
     # @store = MarkovDBtore.new(corpus_dir)
@@ -46,17 +47,8 @@ class MarkovChain
     MarkovChain.normalize(next_words)
   end
 
-  def finish
-    puts "words: #{@starts.size}"
-    result = []
-    @starts.map do |x|
-      if x =~ /^[A-Z].+[^",;\.\)—]$/ && x !~ /^[XIVLMC]{3,}$/
-        result << x
-      end
-    end
-    @starts = result
-
-    @store.set_starts(@starts)
+  def random_start
+    @store.random_start(@min_order)
   end
 
   def self.normalize(items)
@@ -70,8 +62,6 @@ class MarkovChain
 protected
 
   def parse_text(text)
-    @starts ||= Set.new
-
     eof = false
     last_words = []
     max_order = 4
@@ -82,12 +72,10 @@ protected
       break if eof
       next_word = scanner.check_until(/\S+/)&.strip
 
-      @starts << cur_word
-
       last_words << cur_word
       last_words.delete_at(0) if last_words.size > max_order
 
-      (2..max_order).each do |n|
+      (@min_order..max_order).each do |n|
         if last_words.size >= n && !next_word.nil?
           add(last_words[-n..-1], next_word)
         end

@@ -78,13 +78,26 @@ class Clippje
   end
 
   def gen_sentences(n)
-    until @sentence.count(".") == n
+    @sentence = @mc.random_start
+
+    until @sentence.count { |x| x.end_with?('.') } >= n
       @words = find_completions
+      break if @words.empty?
       @word = select_option(@word)
 
       @sentence << @word
       @word = ''
+
+      if @sentence.size > 100
+        break
+        puts "WARN: max words size reached"
+      end
     end
+
+    puts '-'*70
+    puts sentence.join(' ')
+    puts '-'*70
+    puts
   end
 
   def self.corpus_dir
