@@ -83,7 +83,7 @@ class Clippje
     until @sentence.count { |x| x.end_with?('.') } >= n
       @words = find_completions
       break if @words.empty?
-      @word = select_option(@word)
+      @word = select_option(RAND_OPTION)
 
       @sentence << @word
       @word = ''
