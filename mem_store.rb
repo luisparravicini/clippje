@@ -5,6 +5,7 @@ class MarkovMemoryStore
     @words = Hash.new
   	@wordlist = []
   	@wordlist_keys = Hash.new
+    @starts = []
 	end
 
 	def add(k, next_word)
@@ -24,17 +25,21 @@ class MarkovMemoryStore
 		end
 	end
 
+  def set_starts(data)
+    @starts = data
+  end
+  
 	def load(data)
     if data.nil?
       @words.clear
       @wordlist.clear
     else
-      @words, @wordlist, @wordlist_keys = data
+      @words, @wordlist, @wordlist_keys, @starts = data
     end
 	end
 
 	def dump
-    [@words, @wordlist, @wordlist_keys]
+    [@words, @wordlist, @wordlist_keys, @starts]
  	end
 
   def sync

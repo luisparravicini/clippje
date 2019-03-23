@@ -1,3 +1,4 @@
+require 'set'
 require_relative 'mem_store.rb'
 # require_relative 'sdbm_store.rb'
 # require_relative 'db_store.rb'
@@ -45,6 +46,19 @@ class MarkovChain
     MarkovChain.normalize(next_words)
   end
 
+  def finish
+    puts "words: #{@starts.size}"
+    result = []
+    @starts.map do |x|
+      if x =~ /^[A-Z].+[^",;\.\)—]$/ && x !~ /^[XIVLMC]{3,}$/
+        result << x
+      end
+    end
+    @starts = result
+
+    @store.set_starts(@starts)
+  end
+
   def self.normalize(items)
     total = items.reduce(0) { |sum, kv| sum + kv[1] }
     total = total.to_f
@@ -56,6 +70,8 @@ class MarkovChain
 protected
 
   def parse_text(text)
+    @starts ||= Set.new
+
     eof = false
     last_words = []
     max_order = 4
@@ -65,6 +81,8 @@ protected
       eof = cur_word.nil?
       break if eof
       next_word = scanner.check_until(/\S+/)&.strip
+
+      @starts << cur_word
 
       last_words << cur_word
       last_words.delete_at(0) if last_words.size > max_order

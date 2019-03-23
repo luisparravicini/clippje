@@ -48,6 +48,7 @@ class Cache
       dirty = true
     end
     puts
+    @mc.finish
 
     save_cache if dirty
 	end
