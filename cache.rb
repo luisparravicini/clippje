@@ -38,7 +38,7 @@ class Cache
           next
         end
       else
-        puts "\nLanguage not found for #{path}"
+        puts "\nLanguage not found for #{File.basename(path)}"
         next
       end
 
