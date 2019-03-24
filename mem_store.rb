@@ -20,15 +20,15 @@ class MarkovMemoryStore
 
 		next_words = MarkovChain.normalize(next_words)
 		next_words[0..max_words].map do |w|
-			[@wordlist[@wordlist_keys[w.first]], w.last]
+			[@wordlist[w.first], w.last]
 		end
 	end
 
   def random_start(size)
     starts = @words.keys.select { |x|
-      x.size == size && x.first =~ /^[A-Z]/
+      x.size == size && @wordlist[x.first] =~ /^[A-Z]/
     }
-    starts[rand(starts.size)]
+    starts[rand(starts.size)].map { |x| @wordlist[x] }
   end
   
 	def load(data)
@@ -38,6 +38,9 @@ class MarkovMemoryStore
     else
       @words, @wordlist, @wordlist_keys = data
     end
+   # File.open('words.bin', 'wb') { |io| Marshal::dump(@words, io) }
+   # File.open('wordlist.bin', 'wb') { |io| Marshal::dump(@wordlist, io) }
+   # File.open('wordlist_keys.bin', 'wb') { |io| Marshal::dump(@wordlist_keys, io) }
 	end
 
 	def dump
@@ -51,9 +54,8 @@ protected
 
   def to_key(x)
     unless x.nil?
-      arrayize(x).map do |w| 
-        k = @wordlist_keys[w]
-        k.nil? ? nil : @wordlist[k]
+      arrayize(x).map do |w|
+        @wordlist_keys[w]
       end
     end
   end
@@ -73,7 +75,7 @@ protected
       @wordlist << w
       @wordlist_keys[w] = @wordlist.size - 1
     end
-    @wordlist[@wordlist_keys[w]]
+    @wordlist_keys[w]
   end
 
 end

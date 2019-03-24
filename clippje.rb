@@ -89,8 +89,8 @@ class Clippje
       @word = ''
 
       if @sentence.size > 100
-        break
         puts "WARN: max words size reached"
+        break
       end
     end
 
