@@ -17,7 +17,7 @@ All the available options are:
 
 ```
 maui:clippje xrm0$ ./bin/clippje.rb -h
-Usage: ./bin/clippje.rb [-i] <-c corpus>
+Usage: ./bin/clippje.rb [-irl] -c corpus
     -i, --interactive                Interactive
     -c, --corpus NAME                Corpus
     -r, --recreate-cache             Recreate cache

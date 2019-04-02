@@ -17,7 +17,7 @@ end
 
 options = {}
 OptionParser.new do |opts|
-  opts.banner = "Usage: #{$0} [-i] <-c corpus>"
+  opts.banner = "Usage: #{$0} [-irl] -c corpus"
 
   opts.on("-i", "--interactive", "Interactive") do
     options[:interactive] = true
