@@ -101,7 +101,7 @@ class Clippje
   end
 
   def self.corpus_dir
-    File.join(File.dirname(__FILE__), 'texts')
+    File.join(File.dirname(__FILE__), '..', 'texts')
   end
 
 protected

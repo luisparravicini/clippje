@@ -30,7 +30,7 @@ class MarkovMemoryStore
     }
     starts[rand(starts.size)].map { |x| @wordlist[x] }
   end
-  
+
 	def load(data)
     if data.nil?
       @words.clear

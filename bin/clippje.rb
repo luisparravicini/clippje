@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby -W
 
 
-require_relative 'clippje'
+require_relative '../lib/clippje'
 
 
 
