@@ -30,4 +30,4 @@ How it works
 
 Each paragraph of all the corpus' files is used to creates markov chains of order 2, 3 and 4.
 
-When it has generate a word, it selects the probabilities for the current text for all the available chains, randomly chooses one and from that list, a random word.
+When it has to generate a word, it selects the probabilities for the current text for all the available chains, randomly chooses one and from that list, a random word.
