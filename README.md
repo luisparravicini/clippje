@@ -16,8 +16,8 @@ Then you run `./bin/clippje.rb`
 All the available options are:
 
 ```
-maui:clippje xrm0$ ./clippje.rb -h
-Usage: ./gen_text.rb [-i] <-c corpus>
+maui:clippje xrm0$ ./bin/clippje.rb -h
+Usage: ./bin/clippje.rb [-i] <-c corpus>
     -i, --interactive                Interactive
     -c, --corpus NAME                Corpus
     -r, --recreate-cache             Recreate cache
